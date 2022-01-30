@@ -1,4 +1,5 @@
 import kebabCase from 'lodash/kebabCase';
+import omit from 'lodash/omit';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 import reject from '@/lib/reject';
@@ -14,7 +15,8 @@ async function register(req: NextApiRequest, res: NextApiResponse) {
     return reject(res, 'not-allowed', { method: req.method });
   }
 
-  let data;
+  let data, user, session;
+
   try {
     data = getBody(req, ['email', 'password', 'name']);
   } catch (error) {
@@ -29,13 +31,8 @@ async function register(req: NextApiRequest, res: NextApiResponse) {
     return reject(res, 'exists', { entity: 'user' });
   }
 
-  let user = {
-    ...data,
-    username: kebabCase(data.name),
-  };
-  let session;
   try {
-    user = await User.create(user);
+    user = await User.create(data);
 
     req.session.user = {
       _id: String(user._id),
@@ -51,6 +48,7 @@ async function register(req: NextApiRequest, res: NextApiResponse) {
     code: 200,
     data: {
       session,
+      user: omit(user.toObject(), ['password']),
     },
   });
 }

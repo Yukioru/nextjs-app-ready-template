@@ -17,7 +17,7 @@ async function user(req: NextApiRequest, res: NextApiResponse) {
   let user = null;
   try {
     if (sessionUser) {
-      user = await User.findById(sessionUser._id);
+      user = await User.findById(sessionUser._id).select('-password');
     }
   } catch (error) {
     return reject(res, 'internal', { error: error as typeof Error });

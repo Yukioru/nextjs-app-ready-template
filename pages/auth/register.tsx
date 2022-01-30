@@ -7,6 +7,7 @@ import { IApiResponse, TypedFormEvent } from '@/typings/types';
 import withSession from '@/lib/withSession';
 import isAuth from '@/lib/isAuth';
 import api from '@/lib/api';
+import { useStore } from '@/components/StoreProvider';
 
 interface ILoginForm {
   email: HTMLInputElement;
@@ -16,6 +17,7 @@ interface ILoginForm {
 
 const RegisterPage: FC = () => {
   const router = useRouter();
+  const rootStore = useStore('rootStore');
   const [state, setState] = useState<{ error?: string }>({});
 
   async function login(e: TypedFormEvent<HTMLFormElement, ILoginForm>) {
@@ -32,7 +34,8 @@ const RegisterPage: FC = () => {
     const res = await api.post<{}, IApiResponse>('/api/auth/register', data);
 
     if (res.code === 200) {
-      router.reload();
+      rootStore.user.hydrate(res.data?.user);
+      router.replace('/');
     } else {
       setState({ error: res.message });
     }

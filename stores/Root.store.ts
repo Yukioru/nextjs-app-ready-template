@@ -2,8 +2,9 @@ import { enableStaticRendering } from 'mobx-react-lite';
 
 import HydratedStore from '@/stores/base/Hydrated.store';
 import UserStore from '@/stores/User.store';
+import { isServer } from '@/lib/config';
 
-enableStaticRendering(typeof window === 'undefined');
+enableStaticRendering(isServer);
 
 interface IRootStore {
   user: UserStore;

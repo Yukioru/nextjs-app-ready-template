@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import omit from 'lodash/omit';
 
 import dbConnect from '@/lib/dbConnect';
 import reject from '@/lib/reject';
@@ -13,7 +14,8 @@ async function login(req: NextApiRequest, res: NextApiResponse) {
     return reject(res, 'not-allowed', { method: req.method });
   }
 
-  let data;
+  let data, user, session, isPasswordCorrect = false;
+
   try {
     data = getBody(req, ['email', 'password']);
   } catch (error) {
@@ -23,7 +25,6 @@ async function login(req: NextApiRequest, res: NextApiResponse) {
 
   await dbConnect();
 
-  let user;
   try {
     user = await User.findOne({ email: data.email });
     if (!user)
@@ -42,7 +43,6 @@ async function login(req: NextApiRequest, res: NextApiResponse) {
     return reject(res, type, opts);
   }
 
-  let isPasswordCorrect = false;
   try {
     isPasswordCorrect = await user.comparePassword(data.password);
   } catch (error) {
@@ -57,7 +57,7 @@ async function login(req: NextApiRequest, res: NextApiResponse) {
   req.session.user = {
     _id: String(user._id),
   };
-  let session;
+
   try {
     const token = await req.session.save();
     session = await Session.create({ token, userId: user._id });
@@ -69,6 +69,7 @@ async function login(req: NextApiRequest, res: NextApiResponse) {
     code: 200,
     data: {
       session,
+      user: omit(user.toObject(), ['password']),
     },
   });
 }

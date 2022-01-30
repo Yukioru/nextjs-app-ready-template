@@ -18,7 +18,8 @@ export interface TypedFormEvent<T, F = {}> extends BaseSyntheticEvent<Event, Eve
 export interface IApiResponse extends IErrorObject {
   code: number;
   message?: string;
+  fields?: string[];
   data?: {
-    [key: string]: unknown;
+    [key: string]: any;
   };
 }

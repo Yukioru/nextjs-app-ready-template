@@ -25,7 +25,8 @@ instance.interceptors.response.use(
     return response.data;
   },
   function (error) {
-    return error.response.data;
+    console.error(error);
+    return error?.response?.data;
   }
 );
 

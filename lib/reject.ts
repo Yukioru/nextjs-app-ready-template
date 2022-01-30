@@ -4,7 +4,7 @@ import { NextApiResponse } from 'next';
 interface IRejectState {
   code: number;
   message: string;
-  error?: typeof Error;
+  error?: string;
   fields?: string[];
 }
 
@@ -20,7 +20,10 @@ function reject(res: NextApiResponse, type: string, opts: IRejectOptions = {}) {
 
   switch (type) {
     case 'internal': {
-      state.error = opts.error as typeof Error;
+      if (opts.error) {
+        console.error(opts.error);
+        state.error = opts.error.toString();
+      }
       break;
     }
     case 'not-found': {

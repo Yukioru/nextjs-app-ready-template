@@ -7,6 +7,7 @@ export interface IHydratedStore {
   hydrateType: string;
   assignData(data: IHydrationData, hydrateType?: string): void;
   hydrate(data?: IHydrationData): void;
+  [key: string]: any;
 }
 
 

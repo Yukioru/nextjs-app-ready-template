@@ -14,7 +14,8 @@ function Home() {
   async function logout() {
     const res = await api.get<{}, IApiResponse>('/api/auth/logout');
     if (res.code === 200) {
-      router.reload();
+      rootStore.user.clear();
+      router.replace('/');
     }
   }
 
