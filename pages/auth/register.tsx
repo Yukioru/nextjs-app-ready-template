@@ -3,9 +3,10 @@ import { NextApiRequest } from 'next';
 import { useRouter } from 'next/router';
 import { FC, useState } from 'react';
 
-import { TypedFormEvent } from '@/typings/types';
+import { IApiResponse, TypedFormEvent } from '@/typings/types';
 import withSession from '@/lib/withSession';
 import isAuth from '@/lib/isAuth';
+import api from '@/lib/api';
 
 interface ILoginForm {
   email: HTMLInputElement;
@@ -27,13 +28,8 @@ const RegisterPage: FC = () => {
       name: e.target.name.value,
     };
     
-    const res = await fetch('http://localhost:3000/api/auth/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    }).then((res) => res.json());
+ 
+    const res = await api.post<{}, IApiResponse>('/api/auth/register', data);
 
     if (res.code === 200) {
       router.reload();

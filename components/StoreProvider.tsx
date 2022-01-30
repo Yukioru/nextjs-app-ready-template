@@ -13,23 +13,19 @@ interface IStoreProviderProps {
   initialState: IHydrationData;
 }
 
-interface ISomeStore extends IHydratedStore {
-  [key: string]: any;
-}
-
 interface IStoreContext {
-  [key: string]: ISomeStore;
+  [key: string]: IHydratedStore;
 }
 
 export const StoreContext = createContext({});
 
-export function useStore(name?: string): IStoreContext | ISomeStore {
+export function useStore(name?: string) {
   const context = useContext<IStoreContext>(StoreContext);
   if (context === undefined) {
     throw new Error('useStore must be used within StoreProvider');
   }
 
-  return context[name as string] ?? context;
+  return context[name as string] as IHydratedStore ?? context;
 }
 
 export const StoreProvider: FC<IStoreProviderProps> = ({ store, children, initialState }) => {

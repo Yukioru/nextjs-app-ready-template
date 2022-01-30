@@ -6,6 +6,8 @@ import { StoreProvider } from '@/components/StoreProvider';
 import { useLayout } from '@/lib/hooks/useLayout';
 import RootStore from '@/stores/Root.store';
 import { IHydrationData } from '@/stores/base/Hydrated.store';
+import { isServer } from '@/lib/config';
+import api from '@/lib/api';
 
 interface IIndexApp {
   initialState: IHydrationData;
@@ -34,15 +36,11 @@ function IndexApp({
 
 IndexApp.getInitialProps = async (appContext: AppContext) => {
   const appProps = await App.getInitialProps(appContext);
+  api.update(appContext);
+
   let user = null;
-  if (typeof window === 'undefined') {
-    const res = await fetch('http://localhost:3000/api/auth/user', {
-      headers: {
-        cookie: (appContext.ctx.req
-          ? appContext.ctx.req.headers.cookie
-          : undefined) as string,
-      },
-    }).then((res) => res.json());
+  if (isServer) {
+    const res = await api.get('/api/auth/user');
     ({ user } = res?.data || {});
   }
   return {

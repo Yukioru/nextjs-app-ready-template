@@ -10,7 +10,15 @@ export interface IErrorObject {
   message: string;
   opts?: {
     [key: string]: string;
-  }
+  };
 }
 
 export interface TypedFormEvent<T, F = {}> extends BaseSyntheticEvent<Event, EventTarget & T, EventTarget & F> {}
+
+export interface IApiResponse extends IErrorObject {
+  code: number;
+  message?: string;
+  data?: {
+    [key: string]: unknown;
+  };
+}

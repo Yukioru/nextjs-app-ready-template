@@ -1,6 +1,7 @@
 import MemoryStorage from 'memorystorage';
 
 import { IHydratedStore, IHydrationData } from '@/stores/base/Hydrated.store';
+import { isServer } from '@/lib/config';
 
 interface IInitializeStore {
   name: string;
@@ -24,7 +25,7 @@ function initializeStore({ name, Store, initialState = null }: IInitializeStore)
   }
 
   // Для сервера всегда возвращай заново созданный стор
-  if (typeof window === 'undefined') {
+  if (isServer) {
     ms.clear();
     return _store;
   }

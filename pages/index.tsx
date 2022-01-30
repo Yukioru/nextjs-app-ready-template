@@ -4,15 +4,15 @@ import { useRouter } from 'next/router';
 
 import { useStore } from '@/components/StoreProvider';
 import HomeLayout from '@/layouts/HomeLayout';
+import api from '@/lib/api';
+import { IApiResponse } from '@/typings/types';
 
 function Home() {
   const rootStore = useStore('rootStore');
   const router = useRouter();
 
   async function logout() {
-    const res = await fetch('http://localhost:3000/api/auth/logout').then(
-      (res) => res.json()
-    );
+    const res = await api.get<{}, IApiResponse>('/api/auth/logout');
     if (res.code === 200) {
       router.reload();
     }
